@@ -1,0 +1,14 @@
+{
+  "name": "sf-client",
+  "module": "main.ts",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@pogilvie/sf": "npm:@jsr/pogilvie__sf"
+  }
+}
