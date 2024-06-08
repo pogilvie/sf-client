@@ -1,6 +1,8 @@
 import credsData from './creds.json';
-import { Sf, Creds } from './sf';
+import { Sf, Creds } from 'sf';
 import { v4 as uuid } from 'uuid';
+
+
 
 const creds: Creds = credsData;
 const sf = new Sf(creds);
