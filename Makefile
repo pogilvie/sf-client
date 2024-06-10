@@ -1,4 +1,6 @@
 
+run:
+	bun main.ts
 
 creds:
 	sf org display -o dev --json > creds.json

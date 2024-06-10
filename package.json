@@ -9,7 +9,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "@pogilvie/sf": "npm:@jsr/pogilvie__sf",
+    "@pogilvie/sf": "npm:@jsr/pogilvie__sf@0.2.1",
     "uuid": "^9.0.1"
   }
 }

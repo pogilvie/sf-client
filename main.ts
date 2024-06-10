@@ -1,16 +1,29 @@
 import credsData from './creds.json';
-import { Sf, Creds } from 'sf';
-import { v4 as uuid } from 'uuid';
+// import type { Creds } from '../sf/sf';
+// import  { Sf } from '../sf/sf';
+import type { Creds } from '@pogilvie/sf';
+import { Sf } from '@pogilvie/sf';
 
 
 
 const creds: Creds = credsData;
 const sf = new Sf(creds);
-const query = "SELECT Id, Name, Owner.Name FROM Account WHERE Name = 'Marilin Tapping'"
+const query = "SELECT Id, Name, Owner.Name FROM Account LIMIT 10"
 
 let result = await sf.query(query);
 
-console.log(JSON.stringify(result, null, 4));
+if (result.success) {
+    const formattedData = result.body.records.map( (row: any) => ({
+        Id: row.Id,
+        Name: row.Name,
+        OwnerName: row.Owner.Name
+    }));
+    console.table(formattedData);
+} else {
+    console.log(`query: ${result.status} ${result.msg}`);
+    console.log(JSON.stringify(result.body, null, 4));
+    process.exit(1);
+}
 
 const newAccount = {
     Name: 'New Account Name',
@@ -19,44 +32,32 @@ const newAccount = {
     Website: 'https://example.com'
 };
 
-const readResult = await sf.insert('Account', newAccount);
+result = await sf.insert('Account', newAccount);
+let newId;
 
-console.log(`newAccount Id: ${readResult.id}`);
+if (result.success) {
+    console.log(`insert record id: ${result.body.id}`);
+    newId = result.body.id;
+} else {
+    console.log(`insert: ${result.status} ${result.msg}`);
+    console.log(JSON.stringify(result.body, null, 4));
+    process.exit(1);
+}
 
-const RARTQuery = "SELECT Id from RecordType WHERE SobjectType = 'Account' and Name = 'Restricted Access'"
-const retrictedAccessRecordType = await sf.query(RARTQuery);
-
-console.log('Retricted Access Recordtype:', retrictedAccessRecordType.records[0].Id);
-
-const accountId = readResult.id;
-const rtid = retrictedAccessRecordType.records[0].Id;
-
-// const updateRecord = {
-//     RecordTypeId: rtid
-// };
-
-const updateRecord = {
-    Sales_Country__c: 'United States',
-    Monorail_UUID__c: uuid(),
-    RecordTypeId: rtid
+const update = {
+    Name: 'Updated Name'
 };
 
-const uresult = await sf.update('Account', accountId, updateRecord)
+result = await sf.update('Account', newId, update);
 
-console.log('update result', JSON.stringify(uresult));
-
-
-// const restrictedAccount = {
-//     Name: 'Restricted Account',
-//     Type: 'Prospect',
-//     Industry: 'Technology',
-//     Website: 'https://example.com',
-//     Monorail_UUID__c: 'bbb-ccc-ddd'
-// };
+if (result.success) {
+    console.log(`update success:${JSON.stringify(result)}`);
+} else {
+    console.log(`update: ${result.status} ${result.msg}`);
+    console.log(JSON.stringify(result.body, null, 4));
+    process.exit(1);
+}
 
 
-// const readResult2 = await sf.insert('Account', restrictedAccount);
-
-// console.log(`restricted account Id: ${JSON.stringify(readResult2)}`);
 
 
